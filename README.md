@@ -2,13 +2,6 @@
 
 Een eigen spaceships-game die we stap voor stap vanaf nul opbouwen met PHP. Dit is de eerste kleine basis: één ruimteschip als object en een pagina die de gegevens toont. De volledige game bouwen we later verder uit.
 
-## Wat leer ik hiermee?
-
-- Een PHP-project starten op je Mac.
-- Een class gebruiken als blauwdruk voor objecten.
-- Een object aanmaken en de gegevens ervan veilig tonen.
-- Wijzigingen bewaren met Git en delen via GitHub.
-
 ## Benodigdheden
 
 - PHP 8.0 of hoger
