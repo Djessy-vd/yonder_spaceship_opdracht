@@ -1,0 +1,11 @@
+# macOS-bestanden
+.DS_Store
+
+# Tijdelijke editorbestanden
+.vscode/
+.idea/
+*.swp
+
+# Afhankelijkheden en privé-instellingen (voor later)
+/vendor/
+.env
