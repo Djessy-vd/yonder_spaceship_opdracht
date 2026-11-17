@@ -1,6 +1,13 @@
-# yonder_spaceship_opdracht
+# Spaceships-opdracht
 
-Een eigen spaceships-game die we stap voor stap vanaf nul opbouwen met PHP. Dit is de eerste kleine basis: één ruimteschip als object en een pagina die de gegevens toont. De volledige game bouwen we later verder uit.
+Een eigen spaceships-game die we stap voor stap vanaf nul opbouwen met PHP. Deze versie laat twee ruimteschepen zien en demonstreert schieten, schade krijgen en bewegen. We bouwen de volledige game later verder uit.
+
+## Wat leer ik hiermee?
+
+- Een PHP-project starten op je Mac.
+- Classes, objecten, eigenschappen en methods gebruiken.
+- Munitie, brandstof en levenspunten bijhouden.
+- Wijzigingen bewaren met Git en delen via GitHub.
 
 ## Benodigdheden
 
@@ -23,24 +30,27 @@ cd ~/Documents/Code/yonder_spaceship_opdracht
 php -S localhost:8000
 ```
 
-Open <http://localhost:8000> in je browser. Stop de server met `Control+C` in Terminal.
+Open daarna <http://localhost:8000> in je browser. Stop de server met `Control+C` in Terminal.
 
-## Mappen en bestanden
+De pagina demonstreert elke keer dezelfde beurt: de Star Explorer schiet op de Rode komeet en beweegt. Herladen begint opnieuw; de schepen bewaren hun voorraad nog niet tussen beurten.
 
-- `index.php` — het startpunt van de pagina.
-- `src/Spaceship.php` — de eerste class voor een ruimteschip.
-- `.gitignore` — bestanden die Git niet hoeft op te slaan.
+## Bestanden
+
+- `index.php` — maakt twee schepen en toont de demonstratie.
+- `src/Spaceship.php` — beschrijft de eigenschappen en acties van een ruimteschip.
+- `.gitignore` — laat tijdelijke en privébestanden buiten Git.
+
+## De opdracht verder ontwikkelen
+
+De class heeft eigenschappen voor naam, snelheid, munitie, brandstof en levenspunten. De methods `shoot()`, `hit()` en `move()` voeren de acties uit en bewaken de voorraden. De volgende stap kan zijn om zelf een knop te maken waarmee je een actie kiest en de scheepsstatus tussen beurten bewaart.
 
 ## Wijzigingen opslaan en naar GitHub sturen
 
-De map is al gekoppeld aan je GitHub-repository. Voer de volgende opdrachten uit in Terminal, vanuit deze projectmap:
+Deze projectmap is al gekoppeld aan je GitHub-repository. Voer in Terminal, vanuit de projectmap, deze opdrachten uit:
 
 ```bash
 git status
 git add .
-git commit -m "Start eigen Spaceships-project"
+git commit -m "Beschrijf je wijziging"
 git push
 ```
-
-Bij volgende werkmomenten gebruik je opnieuw `git add .`, `git commit -m "Korte uitleg van je wijziging"` en `git push` om je werk op te slaan en te delen.
-
