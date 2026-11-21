@@ -2,31 +2,63 @@
 
 declare(strict_types=1);
 
-// Laad de Spaceship-class, zodat we die op deze pagina kunnen gebruiken.
 require_once __DIR__ . '/src/Spaceship.php';
 
-// Maak twee schepen. De voorraad begint standaard op 100.
-$playerShip = new Spaceship('Star Explorer', 1200);
-$enemyShip = new Spaceship('Rode komeet', 900);
+session_start();
 
-// Laat de Star Explorer schieten en verwerk de schade bij het andere schip.
-$damage = $playerShip->shoot();
-$enemyShip->hit($damage);
-
-// Bewegen kost brandstof. De uitkomst bewaren we voor het bericht op de pagina.
-$didMove = $playerShip->move();
-
-if ($damage > 0) {
-    $actionMessage = $playerShip->getName() . ' schiet en doet ' . $damage . ' schade.';
-} else {
-    $actionMessage = $playerShip->getName() . ' kan niet schieten.';
+// Begin een nieuw spel als er nog geen spel bestaat.
+if (!isset($_SESSION['playerShip'], $_SESSION['enemyShip'])) {
+    $_SESSION['playerShip'] = new Spaceship('Star Explorer', 1200);
+    $_SESSION['enemyShip'] = new Spaceship('Rode komeet', 900);
 }
 
-if ($didMove) {
-    $actionMessage .= ' Het schip beweegt en gebruikt 2 brandstof.';
+$playerShip = $_SESSION['playerShip'];
+$enemyShip = $_SESSION['enemyShip'];
+$actionMessage = 'Kies een actie om te beginnen.';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'restart') {
+        unset($_SESSION['playerShip'], $_SESSION['enemyShip']);
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
+    if ($playerShip->isAlive() && $enemyShip->isAlive()) {
+        if ($action === 'shoot') {
+            $damage = $playerShip->shoot();
+            $enemyShip->hit($damage);
+            $actionMessage = $damage > 0
+                ? 'Je schiet en doet ' . $damage . ' schade.'
+                : 'Je hebt niet genoeg munitie om te schieten.';
+        } elseif ($action === 'move') {
+            $didMove = $playerShip->move();
+            $actionMessage = $didMove
+                ? 'Je schip beweegt en gebruikt 2 brandstof.'
+                : 'Je hebt niet genoeg brandstof om te bewegen.';
+        } else {
+            $actionMessage = 'Ongeldige actie.';
+        }
+
+        // De vijand schiet terug na een geldige actie.
+        if ($action === 'shoot' || $action === 'move') {
+            $enemyDamage = $enemyShip->shoot();
+            $playerShip->hit($enemyDamage);
+            if ($enemyDamage > 0 && $playerShip->isAlive()) {
+                $actionMessage .= ' De vijand schiet terug voor ' . $enemyDamage . ' schade.';
+            }
+        }
+    } else {
+        $actionMessage = 'Het gevecht is voorbij. Begin een nieuw spel.';
+    }
+
+    $_SESSION['playerShip'] = $playerShip;
+    $_SESSION['enemyShip'] = $enemyShip;
 }
 
 $enemyStatus = $enemyShip->isAlive() ? 'In de lucht' : 'Uitgeschakeld';
+$gameOver = !$playerShip->isAlive() || !$enemyShip->isAlive();
 ?>
 <!doctype html>
 <html lang="nl">
@@ -39,7 +71,7 @@ $enemyStatus = $enemyShip->isAlive() ? 'In de lucht' : 'Uitgeschakeld';
     <h1>Spaceships-gevecht</h1>
     <p><?= htmlspecialchars($actionMessage, ENT_QUOTES, 'UTF-8') ?></p>
 
-    <h2><?= htmlspecialchars($playerShip->getName(), ENT_QUOTES, 'UTF-8') ?></h2>
+    <h2><?= htmlspecialchars($playerShip->getName(), ENT_QUOTES, 'UTF-8') ?> (jij)</h2>
     <ul>
         <li>Status: <?= $playerShip->isAlive() ? 'In de lucht' : 'Uitgeschakeld' ?></li>
         <li>Maximale snelheid: <?= $playerShip->getMaxSpeed() ?> km/s</li>
@@ -57,6 +89,17 @@ $enemyStatus = $enemyShip->isAlive() ? 'In de lucht' : 'Uitgeschakeld';
         <li>Brandstof: <?= $enemyShip->getFuel() ?></li>
     </ul>
 
-    <p><small>Dit is een vaste demonstratie. De waarden beginnen opnieuw als je de pagina herlaadt.</small></p>
+    <?php if (!$gameOver): ?>
+        <form method="post">
+            <button type="submit" name="action" value="shoot">Schiet</button>
+            <button type="submit" name="action" value="move">Beweeg</button>
+        </form>
+    <?php else: ?>
+        <p><?= $playerShip->isAlive() ? 'Je hebt gewonnen!' : 'Je hebt verloren.' ?></p>
+    <?php endif; ?>
+
+    <form method="post">
+        <button type="submit" name="action" value="restart">Nieuw spel</button>
+    </form>
 </body>
 </html>
